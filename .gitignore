@@ -7,3 +7,5 @@ node_modules/
 # Lockfile for npm or yarn
 package-lock.json
 yarn.lock
+.env
+package.json
