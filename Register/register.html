@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Page</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="register.css" />
+  </head>
+  <body class="custom-background">
+    <nav class="navbar">
+      <div class="navbar-brand">MyWebsite</div>
+      <div id="authLinks">
+        <a href="/Home Page/home.html">Main</a>
+        <a href="/Weather/Weather.html">Weather</a>
+        <a href="/map/index.html">Map</a>
+        <a href="/Login/login.html">Login</a>
+        <a href="/Register/register.html">Register</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <h2>Register</h2>
+      <form id="registration-form" action="/api/register" method="POST">
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone:</label>
+          <input type="text" id="phone" name="phone" required />
+        </div>
+        <div class="form-group">
+          <label for="address">Address:</label>
+          <input type="text" id="address" name="address" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit">Register</button>
+        <div id="message" style="color: red; margin-top: 10px"></div>
+      </form>
+      <p>
+        Already have an account? <a href="/Login/login.html">Login here</a>.
+      </p>
+    </div>
+
+    <!-- Firebase SDK Integration -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+      import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+      } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBYOoO0gvLGlKNhLHMPLEQWN3diiXA7LXs",
+        authDomain: "real-tiem-alert-system.firebaseapp.com",
+        projectId: "real-tiem-alert-system",
+        storageBucket: "real-tiem-alert-system.appspot.com",
+        messagingSenderId: "797066519007",
+        appId: "1:797066519007:web:e038bb3e26179f8506a46a",
+        measurementId: "G-2KVTPYR08E",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+
+      // Handle the registration form submission
+      document
+        .getElementById("registration-form")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          // Get form values
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value.trim();
+
+          // Basic validation
+          if (email === "" || password === "") {
+            document.getElementById("message").textContent =
+              "All fields are required!";
+            return;
+          }
+
+          // Simple email validation
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(email)) {
+            document.getElementById("message").textContent =
+              "Please enter a valid email address!";
+            return;
+          }
+
+          // Firebase Authentication: Create a new user
+          createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+              // Signed in
+              const user = userCredential.user;
+              document.getElementById("message").textContent =
+                "Registration successful!";
+              window.open("/Home Page/home.html", "_blank");
+
+              // Reset form
+              document.getElementById("registration-form").reset();
+            })
+            .catch((error) => {
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              document.getElementById("message").textContent = errorMessage;
+            });
+        });
+    </script>
+  </body>
+</html>

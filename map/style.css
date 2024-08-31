@@ -1,0 +1,175 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f9fa;
+}
+
+.custom-background {
+  background: linear-gradient(to bottom, #0169ca, #bcc6cc);
+}
+
+.navbar {
+  background-color: #343a40;
+}
+
+.navbar-nav .nav-link {
+  color: #ffffff;
+}
+
+.navbar-nav .nav-link.active {
+  color: #007bff;
+}
+
+#map {
+  height: 500px;
+  width: 100%;
+}
+
+#inputs {
+  margin-bottom: 20px;
+}
+
+#inputs label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#inputs input,
+#inputs button {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+#inputs button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#inputs button:hover {
+  background-color: #0056b3;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+#map {
+  height: 500px;
+  width: 100%;
+  margin-top: 20px;
+}
+#inputs {
+  margin-bottom: 20px;
+}
+#inputs label {
+  display: block;
+  margin-bottom: 5px;
+}
+#inputs input,
+#inputs button {
+  width: 100%;
+  margin-bottom: 10px;
+}
+#inputs button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+#inputs button:hover {
+  background-color: #0056b3;
+}
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Merriweather Sans", sans-serif;
+}
+
+:root {
+  --colorDark1: #112d4e;
+  --colorDark2: #3f72af;
+  --colorLight1: #dbe2ef;
+  --colorLight2: #f9f7f7;
+}
+
+body {
+  background-color: var(--colorLight2);
+  color: var(--colorDark1);
+}
+
+/* Navbar Styles */
+.navbar {
+  background-color: var(--colorDark1);
+  color: var(--colorLight2);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+#authLinks {
+  display: flex;
+  gap: 1rem;
+}
+
+#authLinks a {
+  color: var(--colorLight2);
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+#authLinks a.active {
+  text-decoration: underline;
+}
+
+/* Page Specific Styles */
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  color: var(--colorLight2);
+  background-image: linear-gradient(
+    160deg,
+    var(--colorDark1) 0%,
+    var(--colorDark2) 100%
+  );
+}
+
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  padding-top: 20px;
+}
+#map {
+  height: 500px;
+  width: 100%;
+}
+.navbar {
+  margin-bottom: 20px;
+}
+#inputs {
+  margin-bottom: 20px;
+}
+.custom-background {
+  background-color: #f8f9fa;
+}

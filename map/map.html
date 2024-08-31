@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>City Finder and Distance Calculator</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- Custom CSS -->
+    <style>
+      #map {
+        height: 500px;
+        width: 100%;
+      }
+      .navbar {
+        margin-bottom: 20px;
+      }
+      #inputs {
+        margin-bottom: 20px;
+      }
+      .custom-background {
+        background-color: #f8f9fa;
+      }
+    </style>
+  </head>
+  <body class="custom-background">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">City Finder</a>
+      <div class="navbar-nav mr-auto">
+        <a class="nav-link" href="/Home Page/home.html">Main</a>
+        <a class="nav-link" href="/Weather/Weather.html">Weather</a>
+        <a class="nav-link active" aria-current="page" href="/map/index.html"
+          >Map</a
+        >
+        <a class="nav-link" href="/Login/login.html">Login</a>
+        <a class="nav-link" href="/Register/register.html">Register</a>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      <h1>Live Location Map with Destination and Routing</h1>
+      <div class="mb-3">
+        <label for="destination" class="form-label"
+          >Enter Destination City:</label
+        >
+        <input
+          type="text"
+          id="destination"
+          class="form-control"
+          placeholder="Enter city name"
+        />
+      </div>
+      <button id="find" class="btn btn-primary mb-3">Find My Location</button>
+      <button id="findDestination" class="btn btn-secondary mb-3">
+        Find Destination
+      </button>
+      <div id="map"></div>
+
+      <!-- City Distance Finder Inputs -->
+      <h2 class="mt-5">City Distance Finder</h2>
+      <div id="inputs">
+        <label for="city1">Start City:</label>
+        <input type="text" id="city1" placeholder="Enter start city" />
+        <label for="city2">End City:</label>
+        <input type="text" id="city2" placeholder="Enter end city" />
+        <button id="findDistance" class="btn btn-info mt-2">
+          Find Locations and Distance
+        </button>
+      </div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const map = L.map("map").setView([0, 0], 2);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap contributors",
+        }).addTo(map);
+
+        let userMarker, destinationMarker;
+
+        function updateMap(latitude, longitude) {
+          map.setView([latitude, longitude], 13);
+
+          if (userMarker) {
+            userMarker.setLatLng([latitude, longitude]);
+          } else {
+            userMarker = L.marker([latitude, longitude])
+              .addTo(map)
+              .bindPopup("Your Location")
+              .openPopup();
+          }
+        }
+
+        function getLocation() {
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                updateMap(lat, lng);
+              },
+              function (error) {
+                console.error("Error getting location: ", error);
+                alert(
+                  "Unable to retrieve your location. Please allow location access in your browser."
+                );
+              }
+            );
+          } else {
+            alert("Geolocation is not supported by this browser.");
+          }
+        }
+
+        function findDestination() {
+          const city = document.getElementById("destination").value;
+          if (city) {
+            geocode(city, (latLng, displayName) => {
+              if (destinationMarker) {
+                destinationMarker.setLatLng(latLng);
+              } else {
+                destinationMarker = L.marker(latLng)
+                  .addTo(map)
+                  .bindPopup(`Destination: ${displayName}`)
+                  .openPopup();
+              }
+              map.setView(latLng, 13);
+              if (userMarker) {
+                getRoute(
+                  [userMarker.getLatLng().lng, userMarker.getLatLng().lat],
+                  [latLng.lng, latLng.lat]
+                );
+              } else {
+                alert("Please find your location first.");
+              }
+            });
+          } else {
+            alert("Please enter a destination city.");
+          }
+        }
+
+        function geocode(cityName, callback) {
+          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+            cityName
+          )}&limit=1`;
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.length > 0) {
+                const result = data[0];
+                const latLng = L.latLng(result.lat, result.lon);
+                callback(latLng, result.display_name);
+              } else {
+                alert("City not found: " + cityName);
+              }
+            })
+            .catch((error) => {
+              console.error("Geocoding error:", error);
+              alert("Failed to find the city.");
+            });
+        }
+
+        function getRoute(start, end) {
+          const apiKey =
+            "5b3ce3597851110001cf62484e378b6f24a94f839bc03d124e04c707";
+          const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${start.join(
+            ","
+          )}&end=${end.join(",")}`;
+
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.routes && data.routes[0]) {
+                const route = data.routes[0].geometry;
+                const decodedRoute = L.Polyline.decode(route);
+                L.polyline(decodedRoute, { color: "blue" }).addTo(map);
+              } else {
+                alert("Failed to find the route.");
+              }
+            })
+            .catch((error) => {
+              console.error("Routing error:", error);
+              alert("Failed to find the route. Error: " + error.message);
+            });
+        }
+
+        document.getElementById("find").addEventListener("click", getLocation);
+        document
+          .getElementById("findDestination")
+          .addEventListener("click", findDestination);
+
+        // Handle City Distance Finder
+        document
+          .getElementById("findDistance")
+          .addEventListener("click", () => {
+            const city1 = document.getElementById("city1").value;
+            const city2 = document.getElementById("city2").value;
+            if (city1 && city2) {
+              geocode(city1, (latLng1, displayName1) => {
+                geocode(city2, (latLng2, displayName2) => {
+                  L.marker(latLng1)
+                    .addTo(map)
+                    .bindPopup(`Start: ${displayName1}`)
+                    .openPopup();
+                  L.marker(latLng2)
+                    .addTo(map)
+                    .bindPopup(`End: ${displayName2}`)
+                    .openPopup();
+                  map.setView(latLng1, 13);
+                  getRoute(
+                    [latLng1.lng, latLng1.lat],
+                    [latLng2.lng, latLng2.lat]
+                  );
+                });
+              });
+            } else {
+              alert("Please enter both start and end cities.");
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

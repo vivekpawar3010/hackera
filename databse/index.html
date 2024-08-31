@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Disaster Alert Notification</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Disaster Alert Notification System</h1>
+      <form id="alertForm">
+        <label for="phoneNumbers">Phone Numbers (comma-separated):</label>
+        <input
+          type="text"
+          id="phoneNumbers"
+          placeholder="Enter phone numbers, separated by commas"
+          required
+        />
+        <label for="emails">Email Addresses (comma-separated):</label>
+        <input
+          type="email"
+          id="emails"
+          placeholder="Enter emails, separated by commas"
+          required
+        />
+        <button type="submit">Subscribe for Alerts</button>
+      </form>
+      <div id="message"></div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
