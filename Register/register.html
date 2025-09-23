@@ -16,11 +16,11 @@
     <nav class="navbar">
       <div class="navbar-brand">MyWebsite</div>
       <div id="authLinks">
-        <a href="/Home Page/home.html">Main</a>
-        <a href="/Weather/Weather.html">Weather</a>
-        <a href="/map/index.html">Map</a>
-        <a href="/Login/login.html">Login</a>
-        <a href="/Register/register.html">Register</a>
+        <a href="../Home Page/home.html">Main</a>
+        <a href="../Weather/Weather.html">Weather</a>
+        <a href="../map/index.html">Map</a>
+        <a href="../Login/login.html">Login</a>
+        <a href="./register.html">Register</a>
       </div>
     </nav>
 
@@ -47,7 +47,7 @@
         <div id="message" style="color: red; margin-top: 10px"></div>
       </form>
       <p>
-        Already have an account? <a href="/Login/login.html">Login here</a>.
+        Already have an account? <a href="../Login/login.html">Login here</a>.
       </p>
     </div>
 
@@ -107,9 +107,8 @@
             .then((userCredential) => {
               // Signed in
               const user = userCredential.user;
-              document.getElementById("message").textContent =
-                "Registration successful!";
-              window.open("/Home Page/home.html", "_blank");
+              document.getElementById("message").textContent = "Registration successful!";
+              window.location.href = "../Home Page/home.html";
 
               // Reset form
               document.getElementById("registration-form").reset();

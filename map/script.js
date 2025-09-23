@@ -90,17 +90,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function getRoute(start, end) {
     const apiKey = "5b3ce3597851110001cf62484e378b6f24a94f839bc03d124e04c707";
-    const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${start.join(
-      ","
-    )}&end=${end.join(",")}`;
+    const url = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${start.join(",")}&end=${end.join(",")}`;
 
     fetch(url)
       .then((response) => response.json())
       .then((data) => {
-        if (data && data.routes && data.routes[0]) {
-          const route = data.routes[0].geometry;
-          const decodedRoute = L.Polyline.decode(route);
-          L.polyline(decodedRoute, { color: "blue" }).addTo(map);
+        if (data && data.features && data.features[0]) {
+          const geometry = data.features[0].geometry;
+          if (geometry.type === "LineString") {
+            const coords = geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+            L.polyline(coords, { color: "blue" }).addTo(map);
+          } else {
+            alert("Route geometry not supported.");
+          }
+        } else if (data && data.routes && data.routes[0] && data.routes[0].geometry) {
+          // Fallback if API returns encoded geometry (older schema)
+          if (window.decodePolyline) {
+            const decoded = window.decodePolyline(data.routes[0].geometry);
+            L.polyline(decoded, { color: "blue" }).addTo(map);
+          } else {
+            alert("Cannot decode route geometry.");
+          }
         } else {
           alert("Failed to find the route.");
         }
@@ -111,32 +121,37 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   }
 
-  document.getElementById("find").addEventListener("click", getLocation);
-  document
-    .getElementById("findDestination")
-    .addEventListener("click", findDestination);
+  const findBtn = document.getElementById("find");
+  if (findBtn) findBtn.addEventListener("click", getLocation);
+  const findDestBtn = document.getElementById("findDestination");
+  if (findDestBtn) findDestBtn.addEventListener("click", findDestination);
 
   // Handle City Distance Finder
-  document.getElementById("findDistance").addEventListener("click", () => {
-    const city1 = document.getElementById("city1").value;
-    const city2 = document.getElementById("city2").value;
-    if (city1 && city2) {
-      geocode(city1, (latLng1, displayName1) => {
-        geocode(city2, (latLng2, displayName2) => {
-          L.marker(latLng1)
-            .addTo(map)
-            .bindPopup(`Start: ${displayName1}`)
-            .openPopup();
-          L.marker(latLng2)
-            .addTo(map)
-            .bindPopup(`End: ${displayName2}`)
-            .openPopup();
-          map.setView(latLng1, 13);
-          getRoute([latLng1.lng, latLng1.lat], [latLng2.lng, latLng2.lat]);
+  const findDistanceBtn = document.getElementById("findDistance");
+  if (findDistanceBtn) {
+    findDistanceBtn.addEventListener("click", () => {
+      const city1Input = document.getElementById("city1");
+      const city2Input = document.getElementById("city2");
+      const city1 = city1Input ? city1Input.value : "";
+      const city2 = city2Input ? city2Input.value : "";
+      if (city1 && city2) {
+        geocode(city1, (latLng1, displayName1) => {
+          geocode(city2, (latLng2, displayName2) => {
+            L.marker(latLng1)
+              .addTo(map)
+              .bindPopup(`Start: ${displayName1}`)
+              .openPopup();
+            L.marker(latLng2)
+              .addTo(map)
+              .bindPopup(`End: ${displayName2}`)
+              .openPopup();
+            map.setView(latLng1, 13);
+            getRoute([latLng1.lng, latLng1.lat], [latLng2.lng, latLng2.lat]);
+          });
         });
-      });
-    } else {
-      alert("Please enter both start and end cities.");
-    }
-  });
+      } else {
+        alert("Please enter both start and end cities.");
+      }
+    });
+  }
 });

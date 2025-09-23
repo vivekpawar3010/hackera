@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.getElementById("login-form");
   const passwordInput = document.getElementById("password");
   const errorMessage = document.getElementById("error-message");
+  const successMessage = document.getElementById("success-message");
 
   // Update input placeholder based on selected login method
   function updateInputPlaceholder() {
@@ -81,9 +82,15 @@ document.addEventListener("DOMContentLoaded", function () {
     hideErrorMessage();
 
     if (validateForm()) {
-      // Proceed with login (e.g., send data to the server)
-      console.log("Form is valid. Submitting...");
-      loginForm.submit();
+      // Simulated success handling (replace with real API call as needed)
+      if (successMessage) {
+        successMessage.textContent = "Login successful!";
+        successMessage.style.display = "block";
+      }
+      // Redirect after brief delay for UX
+      setTimeout(() => {
+        window.location.href = "../Home Page/home.html";
+      }, 600);
     }
   });
 
@@ -93,8 +100,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Set initial placeholder
   updateInputPlaceholder();
-
-  // Message to Login Successfully
-  document.getElementById("message").textContent = "Login successful!";
-  window.open("/Home Page/home.html", "_blank");
 });
